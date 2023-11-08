@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\User;
 
-class DashboardController extends Controller
+class UserController extends Controller
 {
     public function index()
     {
@@ -15,7 +15,9 @@ class DashboardController extends Controller
 
         // If the user is an admin display the admin control panel
         if ($user->hasRole('admin')) {            
-            return Inertia::render('AdminDashboard');
+            return Inertia::render('User/Index', [
+                'userData' => $userData
+            ]);
         }
 
         // Redirect to the second app if the user is not an admin
