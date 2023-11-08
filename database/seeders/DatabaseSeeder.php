@@ -2,8 +2,11 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -12,11 +15,44 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+         // Create roles
+         $adminRole = Role::create(['name' => 'admin']);
+         $userRole = Role::create(['name' => 'user']);
+ 
+         // Create permissions
+         $manageUsersPermission = Permission::create(['name' => 'manage users']);
+         $manageRolesPermission = Permission::create(['name' => 'manage roles']);
+ 
+         // Assign permissions to roles
+         $adminRole->givePermissionTo($manageUsersPermission, $manageRolesPermission);
+ 
+         // create demo users
+         $user = \App\Models\User::factory()->create([
+             'name' => 'Anthony Johnson',
+             'email' => 'test@example.com',
+             'password' => Hash::make('password'),
+         ]);
+         $user->assignRole('user');
+ 
+         $user = \App\Models\User::factory()->create([
+             'name' => 'Andrew Tate',
+             'email' => 'topg@example.com',
+             'password' => Hash::make('password')
+         ]);
+         $user->assignRole('user');
+ 
+         $user = \App\Models\User::factory()->create([
+             'name' => 'Sarah Apple',
+             'email' => 'testuser@example.com',
+             'password' => Hash::make('password')
+         ]);
+         $user->assignRole('user');
+ 
+         $user = \App\Models\User::factory()->create([
+             'name' => 'Admin User',
+             'email' => 'admin@example.com',
+             'password' => Hash::make('password')
+         ]);
+         $user->assignRole('admin');
     }
 }
