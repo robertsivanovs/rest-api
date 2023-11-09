@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\UpdateUserRequest;
 use Inertia\Inertia;
 use App\Models\User;
 
@@ -24,4 +24,22 @@ class UserController extends Controller
         return redirect()->to('https://second-app-url');
 
     }
+
+    public function edit(int $userId)
+    {
+        $userData = User::findOrFail($userId);
+
+        return Inertia::render('User/Edit', [
+            'userData' => $userData
+        ]);
+    }
+
+    public function update(string $userId, UpdateUserRequest $updateUserRequest)
+    {
+        $user = User::findOrFail($userId);
+        $user->update($updateUserRequest->validated());
+
+        return redirect()->route('dashboard')->with('success', 'User updated successfully');
+    }
+
 }

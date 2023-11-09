@@ -29,6 +29,6 @@ Route::middleware([
     Route::get('/dashboard', [UserController::class, 'index'])->name('dashboard');
 });
 
-// Route::middleware('auth:sanctum')->group(function () {
-//     Route::get('/admin-dashboard', 'AdminDashboardController@index')->name('admin-dashboard');
-// });
+// Define a route to access the user data editing view
+Route::get('/edit/{userId}', [UserController::class, 'edit'])->name('user.edit');
+Route::put('/update/{userId}', [UserController::class, 'update'])->name('user.update');
