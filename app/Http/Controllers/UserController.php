@@ -1,45 +1,73 @@
 <?php
 
+declare (strict_types=1);
 namespace App\Http\Controllers;
 
+use App\Contracts\UserRepositoryInterface;
 use App\Http\Requests\UpdateUserRequest;
 use Inertia\Inertia;
-use App\Models\User;
 
 class UserController extends Controller
-{
-    public function index()
+{    
+    /**
+     * __construct
+     * 
+     * PHP 8+ constructor promotion
+     *
+     * @return void
+     */
+    public function __construct(
+        private UserRepositoryInterface $userRepository
+    ) {}
+    
+    /**
+     * index
+     * 
+     * Return user list for admin dashboard
+     *
+     * @return Inertia\Response
+     */
+    public function index(): \Inertia\Response
     {
         $user = auth()->user();
-        $userData = $users = User::all();
+        $userData = $this->userRepository->all();
 
-        // If the user is an admin display the admin control panel
-        if ($user->hasRole('admin')) {            
-            return Inertia::render('User/Index', [
-                'userData' => $userData
-            ]);
-        }
-
-        // Redirect to the second app if the user is not an admin
-        return redirect()->to('https://second-app-url');
-
+        return Inertia::render('User/Index', [
+            'userData' => $userData
+        ]);
     }
-
-    public function edit(int $userId)
+    
+    /**
+     * edit
+     * 
+     * Return user data for user edit view in admin dashboard
+     *
+     * @param  string $userId
+     * @return Inertia\Response
+     */
+    public function edit(string $userId): \Inertia\Response
     {
-        $userData = User::findOrFail($userId);
+        $userData = $this->userRepository->findById($userId);
 
         return Inertia::render('User/Edit', [
             'userData' => $userData
         ]);
     }
-
-    public function update(string $userId, UpdateUserRequest $updateUserRequest)
+    
+    /**
+     * update
+     * 
+     * Update user data by admin
+     *
+     * @param  string $userId
+     * @param  UpdateUserRequest $updateUserRequest
+     * @return Illuminate\Http\RedirectResponse
+     */
+    public function update(string $userId, UpdateUserRequest $updateUserRequest): \Illuminate\Http\RedirectResponse
     {
-        $user = User::findOrFail($userId);
-        $user->update($updateUserRequest->validated());
+        $user = $this->userRepository->findById($userId);
+        $this->userRepository->update($user, $updateUserRequest->validated());
 
         return redirect()->route('dashboard')->with('success', 'User updated successfully');
     }
-
 }

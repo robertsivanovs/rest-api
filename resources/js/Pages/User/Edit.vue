@@ -21,7 +21,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
                     </div>
                     <div class="flex flex-col">
                         <label for="coins" class="text-sm text-gray-600">Coin balance</label>
-                        <input type="text" id="coins" class="border rounded-lg py-2 px-3 mt-1">
+                        <input type="text" name="coin-balance" id="coins" v-model="userData.coin_balance" class="border rounded-lg py-2 px-3 mt-1">
                     </div>
                     <!-- Add more fields as needed to edit user data -->
                     <button type="submit" class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
@@ -46,11 +46,10 @@ import AppLayout from '@/Layouts/AppLayout.vue';
     methods: {
       updateUser() {
         // Send a request to update the user's data
-        // You can use Axios or your preferred HTTP library here
         this.$inertia.put(`/update/${this.userData.id}`, {
             name: this.userData.name,
-            email: this.userData.email
-            // TO DO: Add coins
+            email: this.userData.email,
+            coin_balance: this.userData.coin_balance
         });
 
       },

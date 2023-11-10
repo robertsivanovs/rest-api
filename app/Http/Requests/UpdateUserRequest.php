@@ -25,8 +25,8 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'email' => 'required|email'
-            // To DO: Add coins
+            'email' => 'required|email',
+            'coin_balance' => 'string|max:255'
         ];
     }
 

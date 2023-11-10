@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
          $user = \App\Models\User::factory()->create([
              'name' => 'Anthony Johnson',
              'email' => 'test@example.com',
+             'coin_balance' => 20,
              'password' => Hash::make('password'),
          ]);
          $user->assignRole('user');
@@ -37,6 +38,7 @@ class DatabaseSeeder extends Seeder
          $user = \App\Models\User::factory()->create([
              'name' => 'Andrew Tate',
              'email' => 'topg@example.com',
+             'coin_balance' => 9999,
              'password' => Hash::make('password')
          ]);
          $user->assignRole('user');
@@ -44,6 +46,7 @@ class DatabaseSeeder extends Seeder
          $user = \App\Models\User::factory()->create([
              'name' => 'Sarah Apple',
              'email' => 'testuser@example.com',
+             'coin_balance' => 10,
              'password' => Hash::make('password')
          ]);
          $user->assignRole('user');
@@ -51,6 +54,7 @@ class DatabaseSeeder extends Seeder
          $user = \App\Models\User::factory()->create([
              'name' => 'Admin User',
              'email' => 'admin@example.com',
+             'coin_balance' => 0,
              'password' => Hash::make('password')
          ]);
          $user->assignRole('admin');
