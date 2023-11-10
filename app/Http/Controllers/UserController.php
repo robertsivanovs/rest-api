@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Contracts\UserRepositoryInterface;
 use App\Http\Requests\UpdateUserRequest;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {    
@@ -29,7 +30,6 @@ class UserController extends Controller
      */
     public function index(): \Inertia\Response
     {
-        $user = auth()->user();
         $userData = $this->userRepository->all();
 
         return Inertia::render('User/Index', [
@@ -47,11 +47,17 @@ class UserController extends Controller
      */
     public function edit(string $userId): \Inertia\Response
     {
-        $userData = $this->userRepository->findById($userId);
+        try {
+            $userData = $this->userRepository->findById($userId);
 
-        return Inertia::render('User/Edit', [
-            'userData' => $userData
-        ]);
+            return Inertia::render('User/Edit', [
+                'userData' => $userData
+            ]);
+        } catch (\Exception $e) {
+            // Redirect the user back to the dashboard and log the error message
+            Log::error("Error editing user with ID {$userId}: {$e->getMessage()}");
+            return Inertia::render('Auth/Login');
+        }
     }
     
     /**
@@ -65,9 +71,18 @@ class UserController extends Controller
      */
     public function update(string $userId, UpdateUserRequest $updateUserRequest): \Illuminate\Http\RedirectResponse
     {
-        $user = $this->userRepository->findById($userId);
-        $this->userRepository->update($user, $updateUserRequest->validated());
+        try {
+            $user = $this->userRepository->findById($userId);
+            $this->userRepository->update($user, $updateUserRequest->validated());
 
-        return redirect()->route('dashboard')->with('success', 'User updated successfully');
+            return redirect()->route('dashboard')->with('success', 'User updated successfully');
+        } catch (\Exception $e) {
+            // Log the error
+            Log::error($e->getMessage());
+
+            // Return an error message to the user
+            return redirect()->route('dashboard')->with('error', $e->getMessage());
+        }
     }
+
 }

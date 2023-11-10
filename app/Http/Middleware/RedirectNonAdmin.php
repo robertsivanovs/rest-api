@@ -17,13 +17,13 @@ class RedirectNonAdmin
     {
         $user = auth()->user();
         // Generate the token for the second app
-        // $token = $user->createToken('api-token')->plainTextToken;
 
         // Redirect non-admin users to the second app
         if ($user && !$user->hasRole('admin')) {
+            $token = $user->createToken('api-token')->plainTextToken;
 
             // Append the token as a query parameter to the redirect URL
-            $redirectUrl = 'http://localhost:8001/?token=' . $token;
+            $redirectUrl = config('secondapp.url') . '?token=' . $token;
 
             return redirect()->away($redirectUrl);
         }
