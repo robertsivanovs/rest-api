@@ -5,6 +5,8 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 
 class RedirectNonAdmin
 {
@@ -16,16 +18,23 @@ class RedirectNonAdmin
     public function handle(Request $request, Closure $next): Response
     {
         $user = auth()->user();
-        // Generate the token for the second app
 
         // Redirect non-admin users to the second app
         if ($user && !$user->hasRole('admin')) {
-            $token = $user->createToken('api-token')->plainTextToken;
 
-            // Append the token as a query parameter to the redirect URL
-            $redirectUrl = config('secondapp.url') . '?token=' . $token;
+            try {
+                // Generate the token for the second app
+                $token = $user->createToken('api-token');
+            
+                // Append the token as a query parameter to the redirect URL
+                $redirectUrl = config('secondapp.url') . '?token=' . $token->accessToken->token;
+                
+                return Inertia::location($redirectUrl);
 
-            return redirect()->away($redirectUrl);
+            } catch(\Exception $e) {
+                Log::error('Token generation error: ' . $e->getMessage());
+            }
+
         }
 
         return $next($request);

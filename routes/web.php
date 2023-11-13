@@ -3,8 +3,8 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\TokenController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,3 +38,5 @@ Route::middleware([
     Route::put('/update/{userId}', [UserController::class, 'update'])->name('user.update');
 });
 
+Route::get('/api', [TokenController::class, 'validateToken'])
+    ->middleware('verify.api.token');
