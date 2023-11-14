@@ -8,9 +8,9 @@ use App\Models\User;
 use Illuminate\Support\Facades\Log;
 
 /**
- * UserDataAttacherTrait
+ * TransactionDataAttacherTrait
  */
-class UserDataAttacherTrait
+class TransactionDataAttacherTrait
 {    
     /**
      * attachUserDataToRequest
@@ -21,7 +21,7 @@ class UserDataAttacherTrait
      * @param  string $userId
      * @return void
      */
-    public function attachUserDataToRequest(Request $request, int $userId): void
+    public function attachTransactionDataToRequest(Request $request, int $userId): void
     {
         try {
             $user = User::findOrFail($userId);
@@ -33,8 +33,7 @@ class UserDataAttacherTrait
                     'user_name' => $user->name,
                     'user_email' => $user->email,
                     'user_coin_balance' => $user->coin_balance,
-                    'last_login_at' => $user->last_login_at,
-                    'transaction_history' => $user->coinTransactions->toArray()
+                    'last_login_at' => $user->last_login_at
                     ]
                 ]);
             }
