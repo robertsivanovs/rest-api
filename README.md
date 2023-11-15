@@ -50,3 +50,8 @@ Sample user Data:
              password => password
 
 Second app setup instructions are in the second app Readme file.
+
+### Preview:
+ 
+### Admin dashboard:
+![Dashboard view](https://i.imgur.com/HStK7lD.png "Dashboard view")
