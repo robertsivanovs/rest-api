@@ -34,6 +34,7 @@ class UserDataAttacherTrait
                     'user_email' => $user->email,
                     'user_coin_balance' => $user->coin_balance,
                     'last_login_at' => $user->last_login_at,
+                    'last_coin_payout_at' => $user->last_coin_payout_at,
                     'transaction_history' => $user->coinTransactions->toArray()
                     ]
                 ]);

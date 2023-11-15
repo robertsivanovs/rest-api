@@ -26,17 +26,17 @@ class JetstreamServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(CoinService $coinService): void
+    public function boot(): void
     {
         $this->configurePermissions();
 
         Jetstream::deleteUsersUsing(DeleteUser::class);
 
-        Fortify::authenticateUsing(function (Request $request) use ($coinService) {
+        Fortify::authenticateUsing(function (Request $request) {
             $user = User::where('email', $request->email)->first();
 
             if ($user && Hash::check($request->password, $user->password)) {
-                return $this->handleUserLogin($user, $coinService);
+                return $this->handleUserLogin($user);
             }
         });
     }
@@ -64,23 +64,22 @@ class JetstreamServiceProvider extends ServiceProvider
      *
      * @return User
      */
-    private function handleUserLogin(User $user, CoinService $coinService): User
+    private function handleUserLogin(User $user): User
     {
         try {
             $now = Carbon::now();
 
+            // Get the last coin transaction date
+            $lastPayoutDate = $user->coinTransactions()->latest()->value('created_at');
+
             // If user has never logged in then add coins
-            if (!$user->last_login_at) {
-                $coinService->addCoins($user, config('coinrewards.amount'));
+            if (!$user->last_login_at || !$lastPayoutDate) {
+                CoinService::addCoins($user, config('coinrewards.amount'));
             }
 
-            // Check if 24 hours have passed since the last login
-            if ($user->last_login_at) {
-                $lastLogin = Carbon::parse($user->last_login_at);
-
-                if ($lastLogin->diffInHours($now) >= 24) {
-                    $coinService->addCoins($user, config('coinrewards.amount'));
-                }    
+            // Check if 24 hours have passed since the last payout
+            if ($lastPayoutDate && Carbon::parse($lastPayoutDate)->diffInHours($now) >= 24) {
+                CoinService::addCoins($user, config('coinrewards.amount'));
             }
 
             // Update last login date

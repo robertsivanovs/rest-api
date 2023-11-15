@@ -38,7 +38,7 @@ class TransactionDataAttacherTrait
                 ]);
             }
         } catch(\Exception $e) {
-            Log::error("Error in attachUserDataToRequest: " . $e->getMessage());
+            Log::error("Error in attachTransactionDataToRequest: " . $e->getMessage());
         }
     }
 }
